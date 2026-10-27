@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Comparison - SoilCare AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-leaf text-warning me-2 fs-4"></i>
+        <span>SoilCare AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto" id="main-nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="mb-4">
+      <h2 class="fw-bold text-success"><i class="fas fa-balance-scale me-2"></i>Multi-Sample Soil Health Comparison</h2>
+      <p class="text-muted">Select two soil sample test entries to perform side-by-side comparative diagnostics across physical, chemical, and degradation metrics.</p>
+    </div>
+
+    <!-- Selector Card -->
+    <div class="custom-card p-4 mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+          <label for="sampleSelect1" class="form-label fw-bold text-success"><i class="fas fa-vial me-1"></i>Sample 1 (Primary)</label>
+          <select class="form-select" id="sampleSelect1">
+            <option value="">Loading samples...</option>
+          </select>
+        </div>
+
+        <div class="col-md-5">
+          <label for="sampleSelect2" class="form-label fw-bold text-danger"><i class="fas fa-vial me-1"></i>Sample 2 (Comparison)</label>
+          <select class="form-select" id="sampleSelect2">
+            <option value="">Loading samples...</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <button onclick="compareSamples()" class="btn btn-primary-custom w-100 py-2 shadow-sm"><i class="fas fa-sync-alt me-1"></i>Compare</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Comparison Winner Indicator -->
+    <div id="health-winner-container" class="mb-4"></div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="custom-card p-4 h-100">
+          <h5 class="fw-bold text-success mb-3"><i class="fas fa-chart-bar me-2"></i>Physical & Chemical Parameter Comparison</h5>
+          <canvas id="chart-comparison-bar" height="250"></canvas>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="custom-card p-4 h-100">
+          <h5 class="fw-bold text-success mb-3"><i class="fas fa-spider me-2"></i>Soil Nutrient & Fertility Profile (Radar Overlay)</h5>
+          <canvas id="chart-comparison-radar" height="250"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Comparison Table -->
+    <div class="custom-card p-4 mb-4">
+      <h5 class="fw-bold text-success mb-3"><i class="fas fa-table me-2"></i>Side-by-Side Parameter Matrix</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Soil Metric / Parameter</th>
+              <th>Sample 1 Values</th>
+              <th>Sample 2 Values</th>
+            </tr>
+          </thead>
+          <tbody id="comparison-table-body">
+            <tr>
+              <td colspan="3" class="text-center py-4 text-muted">Select two samples above to inspect comparative metrics.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/comparison.js"></script>
+</body>
+</html>

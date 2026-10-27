@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Records - Admin Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-leaf text-warning me-2 fs-4"></i>
+        <span>SoilCare AI <span class="badge bg-warning text-dark fs-6 ms-2">ADMIN</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto" id="main-nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+      <div>
+        <h2 class="fw-bold text-success mb-1"><i class="fas fa-database me-2"></i>Global Soil Records Repository</h2>
+        <p class="text-muted small mb-0">System-wide inspection of soil test samples across all farmers, districts, and regions</p>
+      </div>
+    </div>
+
+    <!-- Filters Toolbar -->
+    <div class="custom-card p-3 mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
+            <input type="text" class="form-control" id="adminSoilSearch" placeholder="Search by farmer name, district, village...">
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <select class="form-select" id="adminSoilFilterCond">
+            <option value="">All Degradation Levels</option>
+            <option value="Healthy">Healthy</option>
+            <option value="Low">Low Degradation</option>
+            <option value="Moderate">Moderate Degradation</option>
+            <option value="High">High Degradation</option>
+            <option value="Severe">Severe Degradation</option>
+          </select>
+        </div>
+
+        <div class="col-md-2 text-md-end">
+          <span class="badge bg-success-subtle text-success fs-6 px-3 py-2" id="admin-soil-count">0 Records</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Soil Table -->
+    <div class="custom-card p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Sample ID</th>
+              <th>Farmer Name</th>
+              <th>Location</th>
+              <th>Soil Type</th>
+              <th>pH</th>
+              <th>Org Carbon</th>
+              <th>Score</th>
+              <th>Condition</th>
+              <th>Analysis Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-soil-tbody">
+            <tr>
+              <td colspan="10" class="text-center py-4"><span class="loading-spinner me-2"></span>Loading global soil repository...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

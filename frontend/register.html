@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - SoilCare AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-leaf text-warning me-2 fs-4"></i>
+        <span>SoilCare AI</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto" id="main-nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="custom-card p-4 p-md-5">
+          <div class="text-center mb-4">
+            <div class="bg-success-subtle text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px;">
+              <i class="fas fa-user-plus fs-3"></i>
+            </div>
+            <h3 class="fw-bold">Create an Account</h3>
+            <p class="text-muted small">Register to record soil test parameters and generate conservation reports</p>
+          </div>
+
+          <div id="alert-container"></div>
+
+          <form id="registerForm">
+            <div class="mb-3">
+              <label for="fullName" class="form-label fw-semibold">Full Name</label>
+              <input type="text" class="form-control" id="fullName" placeholder="e.g. Dr. Ananya Sen" required>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label fw-semibold">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="name@domain.com" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" placeholder="+91 9876543210" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label fw-semibold">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="At least 6 characters" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="role" class="form-label fw-semibold">Account Role</label>
+              <select class="form-select" id="role">
+                <option value="user" selected>General User / Farmer / Landowner</option>
+                <option value="admin">System Administrator</option>
+              </select>
+              <div class="form-text">Default role is 'user'. Admin role unlocks user & record management capabilities.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-2 fs-6 mb-3" id="regBtn">
+              <i class="fas fa-check-circle me-2"></i>Complete Registration
+            </button>
+
+            <div class="text-center text-muted small">
+              Already registered? <a href="login.html" class="text-success fw-bold">Sign In here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (Auth.isLoggedIn()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      const registerForm = document.getElementById('registerForm');
+      const alertContainer = document.getElementById('alert-container');
+      const regBtn = document.getElementById('regBtn');
+
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertContainer.innerHTML = '';
+
+        const full_name = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirm_password = document.getElementById('confirmPassword').value;
+        const role = document.getElementById('role').value;
+
+        if (password !== confirm_password) {
+          alertContainer.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Passwords do not match.</div>`;
+          return;
+        }
+
+        regBtn.disabled = true;
+        regBtn.innerHTML = '<span class="loading-spinner me-2"></span> Creating Account...';
+
+        const res = await Auth.apiCall('/auth/register', 'POST', {
+          full_name, email, phone, password, confirm_password, role
+        });
+
+        if (res.success) {
+          Auth.saveSession(res.token, res.user);
+          alertContainer.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Account created! Redirecting to dashboard...</div>`;
+          setTimeout(() => {
+            window.location.href = res.user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+          }, 800);
+        } else {
+          regBtn.disabled = false;
+          regBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Complete Registration';
+          alertContainer.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>${res.message || 'Registration failed.'}</div>`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

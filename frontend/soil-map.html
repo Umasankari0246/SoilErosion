@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Soil Map - SoilCare AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-leaf text-warning me-2 fs-4"></i>
+        <span>SoilCare AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto" id="main-nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+      <div>
+        <h2 class="fw-bold text-success mb-1"><i class="fas fa-map-marked-alt me-2"></i>Interactive GIS Soil Location Map</h2>
+        <p class="text-muted small mb-0">Geospatial distribution of soil sample tests color-coded by degradation severity index</p>
+      </div>
+    </div>
+
+    <!-- Map Filter Toolbar & Legend -->
+    <div class="custom-card p-3 mb-4">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold small me-2 text-dark"><i class="fas fa-filter me-1"></i>Filter Status:</span>
+            <button onclick="filterMapByCondition('')" id="btn-filter-all" class="btn btn-sm btn-outline-secondary map-filter-btn active btn-success text-white">All Locations</button>
+            <button onclick="filterMapByCondition('healthy')" class="btn btn-sm btn-outline-success map-filter-btn">Healthy</button>
+            <button onclick="filterMapByCondition('low')" class="btn btn-sm btn-outline-info map-filter-btn">Low Deg</button>
+            <button onclick="filterMapByCondition('moderate')" class="btn btn-sm btn-outline-warning map-filter-btn">Moderate Deg</button>
+            <button onclick="filterMapByCondition('high')" class="btn btn-sm btn-outline-orange map-filter-btn" style="color: #e65100; border-color: #e65100;">High Deg</button>
+            <button onclick="filterMapByCondition('severe')" class="btn btn-sm btn-outline-danger map-filter-btn">Severe Deg</button>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="d-flex justify-content-lg-end gap-3 align-items-center small text-muted">
+            <span class="d-flex align-items-center"><span class="rounded-circle me-1" style="width: 12px; height: 12px; background: #2e7d32; display: inline-block;"></span> Healthy</span>
+            <span class="d-flex align-items-center"><span class="rounded-circle me-1" style="width: 12px; height: 12px; background: #fbc02d; display: inline-block;"></span> Moderate</span>
+            <span class="d-flex align-items-center"><span class="rounded-circle me-1" style="width: 12px; height: 12px; background: #d32f2f; display: inline-block;"></span> Severe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaflet Map Container -->
+    <div id="map"></div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>

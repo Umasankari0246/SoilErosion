@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analysis Result - SoilCare AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-leaf text-warning me-2 fs-4"></i>
+        <span>SoilCare AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto" id="main-nav-links"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+      <div>
+        <h2 class="fw-bold text-success mb-1"><i class="fas fa-clipboard-check me-2"></i>Soil Degradation Assessment Result</h2>
+        <p class="text-muted small mb-0" id="sample-meta-heading">Loading sample information...</p>
+      </div>
+      <div class="mt-3 mt-md-0 d-flex gap-2">
+        <a id="btn-download-pdf" href="#" class="btn btn-outline-danger shadow-sm"><i class="fas fa-file-pdf me-2"></i>Download PDF Report</a>
+        <a href="soil-history.html" class="btn btn-outline-custom shadow-sm"><i class="fas fa-history me-2"></i>View History</a>
+      </div>
+    </div>
+
+    <!-- Main Score & Condition Banner -->
+    <div class="custom-card p-4 mb-4 bg-white">
+      <div class="row align-items-center">
+        <div class="col-md-5 text-center border-end-md py-3">
+          <div class="text-muted fw-bold text-uppercase small mb-2">Calculated Soil Degradation Index</div>
+          <div class="display-3 fw-bold my-2" id="score-display">-- / 100</div>
+          <span class="badge px-3 py-2 fs-6 rounded-pill" id="condition-badge">Loading...</span>
+          <div class="mt-2 text-muted small">Risk Category: <strong id="risk-display">--</strong></div>
+        </div>
+        <div class="col-md-7 ps-md-4 py-3">
+          <h5 class="fw-bold mb-2">Degradation Scale Progress</h5>
+          <div class="progress mb-3" style="height: 25px;">
+            <div id="score-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+          <div class="d-flex justify-content-between small text-muted">
+            <span>0 (Healthy)</span>
+            <span>25 (Low)</span>
+            <span>50 (Moderate)</span>
+            <span>75 (High)</span>
+            <span>100 (Severe)</span>
+          </div>
+
+          <hr class="my-3">
+
+          <div class="row g-2 text-center">
+            <div class="col-4">
+              <div class="bg-light p-2 rounded">
+                <div class="small text-muted">pH Level</div>
+                <strong id="param-ph" class="fs-5">--</strong>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="bg-light p-2 rounded">
+                <div class="small text-muted">Org Carbon</div>
+                <strong id="param-oc" class="fs-5">--%</strong>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="bg-light p-2 rounded">
+                <div class="small text-muted">Moisture</div>
+                <strong id="param-moisture" class="fs-5">--%</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Contributing Factors & Recommendation Cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-5">
+        <div class="custom-card p-4 h-100 border-start border-danger border-4">
+          <h5 class="fw-bold text-danger mb-3"><i class="fas fa-exclamation-circle me-2"></i>Contributing Degradation Factors</h5>
+          <div id="factors-container" class="fs-6">
+            <span class="loading-spinner me-2 text-danger"></span>Evaluating parameters...
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="custom-card p-4 h-100 border-start border-success border-4">
+          <h5 class="fw-bold text-success mb-3"><i class="fas fa-seedling me-2"></i>Recommended Conservation Actions</h5>
+          <div id="recommendations-container">
+            <span class="loading-spinner me-2 text-success"></span>Generating tailored recommendations...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location & Test Parameters Breakdown Table -->
+    <div class="custom-card p-4 mb-4">
+      <h5 class="fw-bold text-success mb-3"><i class="fas fa-table me-2"></i>Tested Parameters & Field Details</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <tbody id="detail-params-table">
+            <!-- Dynamic parameters breakdown -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      Auth.requireAuth();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const sampleId = urlParams.get('id');
+
+      if (!sampleId) {
+        window.location.href = 'soil-history.html';
+        return;
+      }
+
+      document.getElementById('btn-download-pdf').href = `/api/reports/pdf/${sampleId}`;
+
+      const res = await Auth.apiCall(`/soil/${sampleId}`);
+      if (!res.success) {
+        alert('Failed to load soil sample results.');
+        window.location.href = 'soil-history.html';
+        return;
+      }
+
+      const s = res.sample;
+
+      document.getElementById('sample-meta-heading').innerText = `Sample #SMP-${s.id} | Location: ${s.village}, ${s.district}, ${s.state} | Farmer: ${s.farmer_name}`;
+
+      // Score & Progress Bar
+      const score = parseFloat(s.degradation_score);
+      const scoreDisplay = document.getElementById('score-display');
+      scoreDisplay.innerText = `${score} / 100`;
+
+      const progressBar = document.getElementById('score-progress-bar');
+      progressBar.style.width = `${score}%`;
+      progressBar.innerText = `${score}%`;
+
+      const badge = document.getElementById('condition-badge');
+      badge.innerText = s.condition;
+
+      let colorClass = 'bg-success';
+      let badgeClass = 'badge-healthy';
+
+      if (score > 80) { colorClass = 'bg-danger'; badgeClass = 'badge-severe'; }
+      else if (score > 60) { colorClass = 'bg-warning text-dark'; badgeClass = 'badge-high'; }
+      else if (score > 40) { colorClass = 'bg-warning text-dark'; badgeClass = 'badge-moderate'; }
+      else if (score > 20) { colorClass = 'bg-info text-white'; badgeClass = 'badge-low'; }
+
+      progressBar.className = `progress-bar progress-bar-striped ${colorClass}`;
+      badge.className = `badge px-3 py-2 fs-6 rounded-pill ${badgeClass}`;
+
+      document.getElementById('risk-display').innerText = s.risk_level;
+      document.getElementById('param-ph').innerText = s.ph;
+      document.getElementById('param-oc').innerText = `${s.organic_carbon}%`;
+      document.getElementById('param-moisture').innerText = `${s.moisture}%`;
+
+      // Contributing Factors
+      const factorsContainer = document.getElementById('factors-container');
+      const factorsList = s.main_factors.split(';');
+      let factorsHtml = '<ul class="list-group list-group-flush">';
+      factorsList.forEach(f => {
+        if (f.trim()) {
+          factorsHtml += `<li class="list-group-item bg-transparent text-danger px-0 py-2"><i class="fas fa-times-circle me-2"></i>${f.trim()}</li>`;
+        }
+      });
+      factorsHtml += '</ul>';
+      factorsContainer.innerHTML = factorsHtml;
+
+      // Recommended Actions
+      const recsContainer = document.getElementById('recommendations-container');
+      const actions = s.recommended_actions || [];
+      let recsHtml = '';
+      actions.forEach((act, idx) => {
+        recsHtml += `
+          <div class="mb-3 p-3 bg-light rounded border border-success-subtle">
+            <h6 class="fw-bold text-success mb-1"><i class="fas fa-check-circle me-2"></i>${act.category}</h6>
+            <p class="mb-0 text-dark small">${act.action}</p>
+          </div>
+        `;
+      });
+      recsContainer.innerHTML = recsHtml || '<p class="text-muted">No urgent restoration actions required.</p>';
+
+      // Parameters Table
+      const paramsTable = document.getElementById('detail-params-table');
+      paramsTable.innerHTML = `
+        <tr><th>Soil Type</th><td>${s.soil_type}</td><th>Texture</th><td>${s.soil_texture}</td></tr>
+        <tr><th>Land Use</th><td>${s.land_use}</td><th>Target Crop</th><td>${s.crop_type}</td></tr>
+        <tr><th>Nitrogen (N)</th><td>${s.nitrogen} kg/ha</td><th>Phosphorus (P)</th><td>${s.phosphorus} kg/ha</td></tr>
+        <tr><th>Potassium (K)</th><td>${s.potassium} kg/ha</td><th>Electrical Conduct.</th><td>${s.electrical_conductivity} dS/m</td></tr>
+        <tr><th>Salinity</th><td>${s.salinity} ppt</td><th>Soil Erosion Level</th><td>${s.erosion_level}</td></tr>
+        <tr><th>Latitude</th><td>${s.latitude}° N</td><th>Longitude</th><td>${s.longitude}° E</td></tr>
+      `;
+    });
+  </script>
+</body>
+</html>
